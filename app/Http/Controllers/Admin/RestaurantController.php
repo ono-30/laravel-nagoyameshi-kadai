@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Category;
 use App\Models\Restaurant;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -37,7 +38,8 @@ class RestaurantController extends Controller
 
     public function create()
     {
-        return view('admin.restaurants.create');
+        $categories = Category::all();
+        return view('admin.restaurants.create', compact('categories'));
     }
 
 
@@ -61,14 +63,6 @@ class RestaurantController extends Controller
         /*HTTPリクエストから値を取得し、新しいレストランを作成*/
         $restaurant = new Restaurant();
         $restaurant->name = $request->input('name');
-        $restaurant->description = $request->input('description');
-        $restaurant->lowest_price = $request->input('lowest_price');
-        $restaurant->highest_price = $request->input('highest_price');
-        $restaurant->postal_code = $request->input('postal_code');
-        $restaurant->address = $request->input('address');
-        $restaurant->opening_time = $request->input('opening_time');
-        $restaurant->closing_time = $request->input('closing_time');
-        $restaurant->seating_capacity = $request->input('seating_capacity');
 
         /*画像のアップロード処理*/
         /*アップロードされたファイル（name="image"）が存在すれば処理を実行する*/
@@ -82,8 +76,21 @@ class RestaurantController extends Controller
             $restaurant->image = '';
         }
 
+        $restaurant->description = $request->input('description');
+        $restaurant->lowest_price = $request->input('lowest_price');
+        $restaurant->highest_price = $request->input('highest_price');
+        $restaurant->postal_code = $request->input('postal_code');
+        $restaurant->address = $request->input('address');
+        $restaurant->opening_time = $request->input('opening_time');
+        $restaurant->closing_time = $request->input('closing_time');
+        $restaurant->seating_capacity = $request->input('seating_capacity');
+
         /*データベースに保存*/
         $restaurant->save();
+
+        /*HTTPリクエストからcategory_idsパラメータを取得し、IDの配列に基づいてcategory_restaurantテーブルにデータを追加する */
+        $category_ids = array_filter($request->input('category_ids'));
+        $restaurant->categories()->sync($category_ids);
 
         /*保存成功後のリダイレクト・レスポンス*/
         return redirect()->route('admin.restaurants.index')->with('flash_message', '店舗を登録しました。');
@@ -93,7 +100,11 @@ class RestaurantController extends Controller
 
     public function edit(Restaurant $restaurant)
     {
-        return view('admin.restaurants.edit', compact('restaurant'));
+        $categories = Category::all();
+        /*設定されたカテゴリのIDを配列化する*/
+        $category_ids = $restaurant->categories->pluck('id')->toArray();
+
+        return view('admin.restaurants.edit', compact('restaurant', 'categories', 'category_ids'));
     }
 
 
@@ -116,14 +127,6 @@ class RestaurantController extends Controller
 
         /*HTTPリクエストから値を取得し、既存のレストランを更新*/
         $restaurant->name = $request->input('name');
-        $restaurant->description = $request->input('description');
-        $restaurant->lowest_price = $request->input('lowest_price');
-        $restaurant->highest_price = $request->input('highest_price');
-        $restaurant->postal_code = $request->input('postal_code');
-        $restaurant->address = $request->input('address');
-        $restaurant->opening_time = $request->input('opening_time');
-        $restaurant->closing_time = $request->input('closing_time');
-        $restaurant->seating_capacity = $request->input('seating_capacity');
 
         /*画像のアップロード処理*/
         /*アップロードされたファイル（name="image"）が存在すれば処理を実行する*/
@@ -134,8 +137,21 @@ class RestaurantController extends Controller
             $restaurant->image = basename($image);
         }
 
+        $restaurant->description = $request->input('description');
+        $restaurant->lowest_price = $request->input('lowest_price');
+        $restaurant->highest_price = $request->input('highest_price');
+        $restaurant->postal_code = $request->input('postal_code');
+        $restaurant->address = $request->input('address');
+        $restaurant->opening_time = $request->input('opening_time');
+        $restaurant->closing_time = $request->input('closing_time');
+        $restaurant->seating_capacity = $request->input('seating_capacity');
+
         /*データベースに保存*/
         $restaurant->save();
+
+        /*HTTPリクエストからcategory_idsパラメータを取得し、IDの配列に基づいてcategory_restaurantテーブルにデータを追加する */
+        $category_ids = array_filter($request->input('category_ids'));
+        $restaurant->categories()->sync($category_ids);
 
         /*保存成功後のリダイレクト・レスポンス*/
         return redirect()->route('admin.restaurants.show', ['restaurant' => $restaurant->id])->with('flash_message', '店舗を編集しました。');
