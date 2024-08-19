@@ -21,9 +21,19 @@ class RedirectIfAuthenticated
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
+                /*管理者のアカウントでログインした場合、管理ページのホームにリダイレクトさせる */
                 if ($guard === 'admin') {
                     return redirect(RouteServiceProvider::ADMIN_HOME);
                 }
+
+                /*
+                // 一般ユーザーが管理者用ページにアクセスしようとした場合
+                if ($request->is('admin*') && $guard !== 'admin') {
+                    // 一般ユーザーのホームページにリダイレクトさせる
+                    return redirect(RouteServiceProvider::HOME);
+                }
+*/
+
                 return redirect(RouteServiceProvider::HOME);
             }
         }

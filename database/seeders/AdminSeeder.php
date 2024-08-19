@@ -14,8 +14,16 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        $admin = new Admin();
+        /*自分用の管理者アカウント */
+        /*$admin = new Admin();
         $admin->email = 'admin@example.com';
+        $admin->password = Hash::make('nagoyameshi');
+        $admin->save();
+        */
+
+        /*レビュー用の管理者アカウント */
+        $admin = new Admin();
+        $admin->email = 'admin2@example.com';
         $admin->password = Hash::make('nagoyameshi');
         $admin->save();
     }

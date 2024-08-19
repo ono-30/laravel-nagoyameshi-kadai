@@ -12,6 +12,7 @@ class Authenticate extends Middleware
      */
     protected function redirectTo(Request $request): ?string
     {
+        /*未ログインのまま管理者用のページにアクセスした場合、ログインページにリダイレクトさせる */
         if ($request->is('admin/*')) {
             return route('admin.login');
         }
