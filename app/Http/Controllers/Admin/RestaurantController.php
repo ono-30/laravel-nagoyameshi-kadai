@@ -85,7 +85,7 @@ class RestaurantController extends Controller
         /*データベースに保存*/
         $restaurant->save();
 
-        /*保存成功後のリダイレクトまたはレスポンス*/
+        /*保存成功後のリダイレクト・レスポンス*/
         return redirect()->route('admin.restaurants.index')->with('flash_message', '店舗を登録しました。');
     }
 
@@ -137,7 +137,7 @@ class RestaurantController extends Controller
         /*データベースに保存*/
         $restaurant->save();
 
-        /*保存成功後のリダイレクトまたはレスポンス*/
+        /*保存成功後のリダイレクト・レスポンス*/
         return redirect()->route('admin.restaurants.show', ['restaurant' => $restaurant->id])->with('flash_message', '店舗を編集しました。');
     }
 
