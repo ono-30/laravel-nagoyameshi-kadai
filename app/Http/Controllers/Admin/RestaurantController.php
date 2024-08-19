@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\RegularHoliday;
 use App\Models\Category;
 use App\Models\Restaurant;
 use App\Http\Controllers\Controller;
@@ -39,7 +40,8 @@ class RestaurantController extends Controller
     public function create()
     {
         $categories = Category::all();
-        return view('admin.restaurants.create', compact('categories'));
+        $regular_holidays = RegularHoliday::all();
+        return view('admin.restaurants.create', compact('categories', 'regular_holidays'));
     }
 
 
@@ -88,9 +90,13 @@ class RestaurantController extends Controller
         /*データベースに保存*/
         $restaurant->save();
 
-        /*HTTPリクエストからcategory_idsパラメータを取得し、IDの配列に基づいてcategory_restaurantテーブルにデータを追加する */
+        /*HTTPリクエストからcategory_idsパラメータを取得し、カテゴリのIDの配列に基づいてcategory_restaurantテーブルにデータを追加する */
         $category_ids = array_filter($request->input('category_ids'));
         $restaurant->categories()->sync($category_ids);
+
+        /*HTTPリクエストからregular_holiday_idsパラメータを取得し、定休日のIDの配列に基づいてregular_holiday_restaurantテーブルのデータを同期する */
+        $regular_holiday_ids = array_filter($request->input('regular_holiday_ids'));
+        $restaurant->regular_Holidays()->sync($regular_holiday_ids);
 
         /*保存成功後のリダイレクト・レスポンス*/
         return redirect()->route('admin.restaurants.index')->with('flash_message', '店舗を登録しました。');
@@ -101,10 +107,11 @@ class RestaurantController extends Controller
     public function edit(Restaurant $restaurant)
     {
         $categories = Category::all();
+        $regular_holidays = RegularHoliday::all();
         /*設定されたカテゴリのIDを配列化する*/
         $category_ids = $restaurant->categories->pluck('id')->toArray();
 
-        return view('admin.restaurants.edit', compact('restaurant', 'categories', 'category_ids'));
+        return view('admin.restaurants.edit', compact('restaurant', 'categories', 'category_ids', 'regular_holidays'));
     }
 
 
@@ -152,6 +159,10 @@ class RestaurantController extends Controller
         /*HTTPリクエストからcategory_idsパラメータを取得し、IDの配列に基づいてcategory_restaurantテーブルにデータを追加する */
         $category_ids = array_filter($request->input('category_ids'));
         $restaurant->categories()->sync($category_ids);
+
+        /*HTTPリクエストからregular_holiday_idsパラメータを取得し、定休日のIDの配列に基づいてregular_holiday_restaurantテーブルのデータを同期する */
+        $regular_holiday_ids = array_filter($request->input('regular_holiday_ids'));
+        $restaurant->regular_Holidays()->sync($regular_holiday_ids);
 
         /*保存成功後のリダイレクト・レスポンス*/
         return redirect()->route('admin.restaurants.show', ['restaurant' => $restaurant->id])->with('flash_message', '店舗を編集しました。');
