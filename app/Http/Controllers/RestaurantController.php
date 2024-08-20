@@ -73,4 +73,11 @@ class RestaurantController extends Controller
             'total'
         ));
     }
+
+
+
+    public function show(Restaurant $restaurant)
+    {
+        return view('restaurants.show', compact('restaurant'));
+    }
 }

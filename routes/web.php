@@ -48,5 +48,6 @@ Route::get('users/{user}', [Admin\UserController::class, 'show'])->name('users.s
 Route::group(['middleware' => 'guest:admin'], function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::resource('user', UserController::class)->only(['index', 'edit', 'update']);
-    Route::get('/restaurants', [RestaurantController::class, 'index'])->name('restaurants.index');
+    /*Route::get('/restaurants', [RestaurantController::class, 'index'])->name('restaurants.index');*/
+    Route::resource('restaurants', RestaurantController::class)->only(['index', 'show']);
 });
