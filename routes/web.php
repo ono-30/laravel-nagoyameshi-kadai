@@ -2,9 +2,10 @@
 
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\Admin\HomeController as AdminHomeController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
-use App\Http\Controllers\Admin\RestaurantController;
+use App\Http\Controllers\Admin\RestaurantController as AdminRestaurantController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\TermController;
@@ -47,4 +48,5 @@ Route::get('users/{user}', [Admin\UserController::class, 'show'])->name('users.s
 Route::group(['middleware' => 'guest:admin'], function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
     Route::resource('user', UserController::class)->only(['index', 'edit', 'update']);
+    Route::get('/restaurants', [RestaurantController::class, 'index'])->name('restaurants.index');
 });
