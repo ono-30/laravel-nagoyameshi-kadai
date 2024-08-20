@@ -22,6 +22,11 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
+        /*未ログインの場合、ログインページにリダイレクト*/
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error_message', 'ログインしてください。');
+        }
+
         /*現在ログイン中のユーザーのIDを取得*/
         $currentUserId = Auth::id();
 
