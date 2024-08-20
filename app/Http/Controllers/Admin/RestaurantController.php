@@ -95,8 +95,12 @@ class RestaurantController extends Controller
         $restaurant->categories()->sync($category_ids);
 
         /*HTTPリクエストからregular_holiday_idsパラメータを取得し、定休日のIDの配列に基づいてregular_holiday_restaurantテーブルのデータを同期する */
-        $regular_holiday_ids = array_filter($request->input('regular_holiday_ids'));
-        $restaurant->regular_Holidays()->sync($regular_holiday_ids);
+        /*null合体演算子を使用して、nullの場合は空の配列を使用*/
+        $regular_holiday_ids = $request->input('regular_holiday_ids') ?? [];
+        /*array_filterを適用（空の要素を除去）*/
+        $filtered_holiday_ids = array_filter($regular_holiday_ids);
+        /*同期処理を実行*/
+        $restaurant->regular_holidays()->sync($filtered_holiday_ids);
 
         /*保存成功後のリダイレクト・レスポンス*/
         return redirect()->route('admin.restaurants.index')->with('flash_message', '店舗を登録しました。');
@@ -161,8 +165,12 @@ class RestaurantController extends Controller
         $restaurant->categories()->sync($category_ids);
 
         /*HTTPリクエストからregular_holiday_idsパラメータを取得し、定休日のIDの配列に基づいてregular_holiday_restaurantテーブルのデータを同期する */
-        $regular_holiday_ids = array_filter($request->input('regular_holiday_ids'));
-        $restaurant->regular_Holidays()->sync($regular_holiday_ids);
+        /*null合体演算子を使用して、nullの場合は空の配列を使用*/
+        $regular_holiday_ids = $request->input('regular_holiday_ids') ?? [];
+        /*array_filterを適用（空の要素を除去）*/
+        $filtered_holiday_ids = array_filter($regular_holiday_ids);
+        /*同期処理を実行*/
+        $restaurant->regular_holidays()->sync($filtered_holiday_ids);
 
         /*保存成功後のリダイレクト・レスポンス*/
         return redirect()->route('admin.restaurants.show', ['restaurant' => $restaurant->id])->with('flash_message', '店舗を編集しました。');
