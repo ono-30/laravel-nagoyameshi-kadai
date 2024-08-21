@@ -13,8 +13,8 @@ class HomeController extends Controller
     public function index()
     {
 
-        /*restaurantsテーブルから6つのデータを取得し、変数$new_restaurantsに代入する*/
-        $highly_rated_restaurants = Restaurant::take(6)->get();
+        /*restaurantsテーブルから店舗の平均評価が高い順に6つのデータを取得し、変数$highly_rated_restaurantsに代入する*/
+        $highly_rated_restaurants = Restaurant::withAvg('reviews', 'score')->orderBy('reviews_avg_score', 'desc')->take(6)->get();
         /*categoriesテーブルからすべてのデータを取得し、変数$categoriesに代入する*/
         $categories = Category::all();
         /*restaurantsテーブルから作成日時が新しい順に6つのデータを取得し、変数$new_restaurantsに代入する*/

@@ -22,4 +22,16 @@ class Restaurant extends Model
     {
         return $this->belongsToMany(RegularHoliday::class)->withTimestamps();
     }
+
+    /*リレーションシップの設定（レビューに対して1対多）*/
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    /*リレーション先であるreviewsテーブルの平均評価を算出し、その平均値をもとにデータを並べ替える*/
+    public function ratingSortable($query, $direction)
+    {
+        return $query->withAvg('reviews', 'score')->orderBy('reviews_avg_score', $direction);
+    }
 }
