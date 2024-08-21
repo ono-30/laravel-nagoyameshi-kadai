@@ -3,6 +3,7 @@
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RestaurantController;
+use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\Admin\HomeController as AdminHomeController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\RestaurantController as AdminRestaurantController;
@@ -11,6 +12,8 @@ use App\Http\Controllers\Admin\CompanyController;
 use App\Http\Controllers\Admin\TermController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin;
+use App\Http\Middleware\Subscribed;
+use App\Http\Middleware\NotSubscribed;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,7 +50,21 @@ Route::get('users/{user}', [Admin\UserController::class, 'show'])->name('users.s
 /*管理者としてログインしていない状態でのみアクセスできるように認可を設定*/
 Route::group(['middleware' => 'guest:admin'], function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
-    Route::resource('user', UserController::class)->only(['index', 'edit', 'update']);
-    /*Route::get('/restaurants', [RestaurantController::class, 'index'])->name('restaurants.index');*/
     Route::resource('restaurants', RestaurantController::class)->only(['index', 'show']);
+
+    Route::group(['middleware' => ['auth', 'verified']], function () {
+        Route::resource('user', UserController::class)->only(['index', 'edit', 'update']);
+
+        Route::group(['middleware' => [Subscribed::class]], function () {
+            Route::get('subscription/edit', [SubscriptionController::class, 'edit'])->name('subscription.edit');
+            Route::patch('subscription', [SubscriptionController::class, 'update'])->name('subscription.update');
+            Route::get('subscription/cancel', [SubscriptionController::class, 'cancel'])->name('subscription.cancel');
+            Route::delete('subscription', [SubscriptionController::class, 'destroy'])->name('subscription.destroy');
+        });
+
+        Route::group(['middleware' => [NotSubscribed::class]], function () {
+            Route::get('subscription/create', [SubscriptionController::class, 'create'])->name('subscription.create');
+            Route::post('subscription', [SubscriptionController::class, 'store'])->name('subscription.store');
+        });
+    });
 });
