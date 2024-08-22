@@ -63,8 +63,8 @@ Route::group(['middleware' => 'guest:admin'], function () {
             Route::get('subscription/cancel', [SubscriptionController::class, 'cancel'])->name('subscription.cancel');
             Route::delete('subscription', [SubscriptionController::class, 'destroy'])->name('subscription.destroy');
             Route::resource('restaurants.reviews', ReviewController::class)->only(['create', 'store', 'edit', 'update', 'destroy']);
-            Route::match(['put', 'patch'], '/restaurants/{restaurant}/reviews/{review}', [ReviewController::class, 'update'])->name('restaurants.reviews.update');
-            /*Route::delete('/restaurants/{restaurant}/reviews/{review}', [ReviewController::class, 'destroy'])->name('restaurants.reviews.destroy');*/
+            /*Route::match(['put', 'patch'], '/restaurants/{restaurant}/reviews/{review}', [ReviewController::class, 'update'])->name('restaurants.reviews.update');
+            Route::delete('/restaurants/{restaurant}/reviews/{review}', [ReviewController::class, 'destroy'])->name('restaurants.reviews.destroy');*/
         });
 
         Route::group(['middleware' => [NotSubscribed::class]], function () {

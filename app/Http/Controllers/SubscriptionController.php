@@ -40,7 +40,7 @@ class SubscriptionController extends Controller
     public function update(Request $request)
     {
         /*Userインスタンスを取得し、updateDefaultPaymentMethodメソッドを使用してそのユーザーのデフォルトの支払い方法を更新*/
-        $request->user()->updateDefaultPaymentMethod($request->paymentMethodId);/*''を外した*/
+        $request->user()->updateDefaultPaymentMethod('$request->paymentMethodId');/*''を外した*/
 
         /*お支払い方法更新後のリダイレクト・レスポンス*/
         return redirect()->route('home')->with('flash_message', 'お支払い方法を変更しました。');

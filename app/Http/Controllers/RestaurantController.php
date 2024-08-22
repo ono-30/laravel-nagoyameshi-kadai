@@ -23,7 +23,7 @@ class RestaurantController extends Controller
         ];
 
         $sort_query = [];
-        $sorted = "created_at desc";
+        $sorted = 'created_at desc';
 
         if ($request->has('select_sort')) {
             $slices = explode(' ', $request->input('select_sort'));
@@ -32,36 +32,33 @@ class RestaurantController extends Controller
         }
 
         /*クエリビルダの初期化*/
-        $query = Restaurant::query();
+        /*$query = Restaurant::query();*/
 
         /*キーワード検索*/
         if ($keyword) {
-            $query->where(function ($q) use ($keyword) {
-                $q->where('name', 'like', "%{$keyword}%")->orWhere('address', 'like', "%{$keyword}%")->orWhereHas('categories', function ($query) use ($keyword) {
-                    $query->where('categories.name', 'like', "%{$keyword}%");
-                });
-            });
+            /*$query->where(function ($q) use ($keyword) {
+                $q->where('name', 'like', "%{$keyword}%")*/
+            $restaurants = Restaurant::where('name', 'like', "%{$keyword}%")->orWhere('address', 'like', "%{$keyword}%")->orWhereHas('categories', function ($query) use ($keyword) {
+                $query->where('categories.name', 'like', "%{$keyword}%");
+            })
+                ->sortable($sort_query)->orderBy('created_at', 'desc')->paginate(15);
+        } elseif ($category_id) {
+            /*カテゴリによる絞り込み*/
+            $restaurants = Restaurant::whereHas('categories', function ($query) use ($category_id) {
+                $query->where('categories.id', $category_id);
+            })->sortable($sort_query)->orderBy('created_at', 'desc')->paginate(15);
+        } elseif ($price) {
+            $restaurants = Restaurant::where('lowest_price', '<=', $price)->sortable($sort_query)->orderBy('created_at', 'desc')->paginate(15);
+        } else {
+            /*並び替えとページネーションの適用*/
+            $restaurants = Restaurant::sortable($sort_query)->orderBy('created_at', 'desc')->paginate(15);
         }
-        /*カテゴリによる絞り込み*/
-        if ($category_id) {
-            $query->whereHas('categories', function ($q) use ($category_id) {
-                $q->where('categories.id', $category_id);
-            });
-        }
-
-        /*価格による絞り込み*/
-        if ($price) {
-            $query->where('lowest_price', '<=', $price);
-        }
-
-        /*並び替えとページネーションの適用*/
-        $restaurants = $query->sortable()->orderByRaw($sorted)->paginate(15);
-
-        /*総数の取得*/
-        $total = $restaurants->total();
 
         /*カテゴリの取得*/
         $categories = Category::all();
+
+        /*総数の取得*/
+        $total = $restaurants->total();
 
         return view('restaurants.index', compact(
             'keyword',

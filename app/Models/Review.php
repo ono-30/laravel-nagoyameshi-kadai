@@ -12,7 +12,7 @@ class Review extends Model
     /*リレーションシップの設定（レストランに対して多対1）*/
     public function restaurant()
     {
-        return $this->belongsTo(Restaurant::class)->withTimestamps();
+        return $this->belongsTo(Restaurant::class);
     }
 
     /*リレーションシップの設定（会員に対して多対1）*/

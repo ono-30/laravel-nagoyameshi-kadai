@@ -11,9 +11,10 @@ use Illuminate\Http\Request;
 
 class ReviewController extends Controller
 {
-    public function index(Restaurant $restaurant)
+    public function index(Restaurant $restaurant, Request $request)
     {
         $user = Auth::user();
+
 
         if (Auth::user()->subscribed('premium_plan')) {
             /*有料プランユーザーの場合*/
