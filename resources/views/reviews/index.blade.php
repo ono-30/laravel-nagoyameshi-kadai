@@ -5,6 +5,7 @@
 @endpush
 
 @section('content')
+
 <!-- レビューの削除用モーダル -->
 <div class="modal fade" id="deleteReviewModal" tabindex="-1" aria-labelledby="deleteReviewModalLabel">
     <div class="modal-dialog">
@@ -32,6 +33,7 @@
                     <li class="breadcrumb-item"><a href="{{ route('home') }}">ホーム</a></li>
                     <li class="breadcrumb-item"><a href="{{ route('restaurants.index') }}">店舗一覧</a></li>
                     <li class="breadcrumb-item"><a href="{{ route('restaurants.show', $restaurant) }}">店舗詳細</a></li>
+
                     <li class="breadcrumb-item active" aria-current="page">レビュー</li>
                 </ol>
             </nav>
@@ -59,7 +61,7 @@
                     <a class="nav-link link-dark" href="{{ route('restaurants.show', $restaurant) }}">トップ</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link link-dark" href="#">予約</a>
+                    <a class="nav-link link-dark" href="{{ route('restaurants.reservations.create', $restaurant) }}">予約</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active text-white nagoyameshi-bg" aria-current="page" href="{{ route('restaurants.reviews.index', $restaurant) }}">レビュー</a>

@@ -5,6 +5,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\ReservationController;
 use App\Http\Controllers\Admin\HomeController as AdminHomeController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\RestaurantController as AdminRestaurantController;
@@ -51,7 +52,8 @@ Route::get('users/{user}', [Admin\UserController::class, 'show'])->name('users.s
 /*管理者としてログインしていない状態でのみアクセスできるように認可を設定*/
 Route::group(['middleware' => 'guest:admin'], function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
-    Route::resource('restaurants', RestaurantController::class)->only(['index', 'show']);
+    /*Route::resource('restaurants', RestaurantController::class)->only(['index', 'show']);*/
+    Route::resource('restaurants', RestaurantController::class);
 
     Route::group(['middleware' => ['auth', 'verified']], function () {
         Route::resource('user', UserController::class)->only(['index', 'edit', 'update']);
@@ -65,6 +67,8 @@ Route::group(['middleware' => 'guest:admin'], function () {
             Route::resource('restaurants.reviews', ReviewController::class)->only(['create', 'store', 'edit', 'update', 'destroy']);
             /*Route::match(['put', 'patch'], '/restaurants/{restaurant}/reviews/{review}', [ReviewController::class, 'update'])->name('restaurants.reviews.update');
             Route::delete('/restaurants/{restaurant}/reviews/{review}', [ReviewController::class, 'destroy'])->name('restaurants.reviews.destroy');*/
+            Route::resource('restaurants.reservations', ReservationController::class)->only(['index', 'create', 'store', 'destroy']);
+            Route::resource('reservations', ReviewController::class)->only(['index']);
         });
 
         Route::group(['middleware' => [NotSubscribed::class]], function () {

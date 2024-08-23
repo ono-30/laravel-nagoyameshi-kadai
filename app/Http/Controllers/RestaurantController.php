@@ -19,7 +19,8 @@ class RestaurantController extends Controller
         $sorts = [
             '掲載日が新しい順' => 'created_at desc',
             '価格が安い順' => 'lowest_price asc',
-            '評価が高い順' => 'rating desc'
+            '評価が高い順' => 'rating desc',
+            '予約数が多い順' => 'popular desc'
         ];
 
         $sort_query = [];
@@ -31,13 +32,9 @@ class RestaurantController extends Controller
             $sorted = $request->input('select_sort');
         }
 
-        /*クエリビルダの初期化*/
-        /*$query = Restaurant::query();*/
 
         /*キーワード検索*/
         if ($keyword) {
-            /*$query->where(function ($q) use ($keyword) {
-                $q->where('name', 'like', "%{$keyword}%")*/
             $restaurants = Restaurant::where('name', 'like', "%{$keyword}%")->orWhere('address', 'like', "%{$keyword}%")->orWhereHas('categories', function ($query) use ($keyword) {
                 $query->where('categories.name', 'like', "%{$keyword}%");
             })
@@ -48,6 +45,7 @@ class RestaurantController extends Controller
                 $query->where('categories.id', $category_id);
             })->sortable($sort_query)->orderBy('created_at', 'desc')->paginate(15);
         } elseif ($price) {
+            /*価格帯による絞り込み*/
             $restaurants = Restaurant::where('lowest_price', '<=', $price)->sortable($sort_query)->orderBy('created_at', 'desc')->paginate(15);
         } else {
             /*並び替えとページネーションの適用*/

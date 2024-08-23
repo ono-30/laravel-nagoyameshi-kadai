@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Restaurant;
 use App\Models\Review;
+use App\Models\Reservation;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -12,9 +13,9 @@ use Illuminate\Http\Request;
 class ReviewController extends Controller
 {
     public function index(Restaurant $restaurant, Request $request)
+
     {
         $user = Auth::user();
-
 
         if (Auth::user()->subscribed('premium_plan')) {
             /*有料プランユーザーの場合*/

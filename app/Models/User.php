@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Laravel\Cashier\Billable;
+use App\Models\Reservation;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -54,5 +55,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function reviews()
     {
         return $this->hasMany(Review::class);
+    }
+
+    /*リレーションシップの設定（予約に対して1対多）*/
+    public function reservations()
+    {
+        return $this->hasMany(Reservation::class);
     }
 }
