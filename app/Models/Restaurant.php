@@ -48,4 +48,10 @@ class Restaurant extends Model
     {
         return $query->withCount('reservations')->orderBy('reservations_count', $direction);
     }
+
+    /*リレーションシップの設定（会員に対して多対多）*/
+    public function favorited_users()
+    {
+        return $this->belongsToMany(User::class)->withTimestamps();
+    }
 }
