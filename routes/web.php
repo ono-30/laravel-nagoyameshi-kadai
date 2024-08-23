@@ -6,11 +6,13 @@ use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ReservationController;
+use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\TermsController;
 use App\Http\Controllers\Admin\HomeController as AdminHomeController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\RestaurantController as AdminRestaurantController;
 use App\Http\Controllers\Admin\CategoryController;
-use App\Http\Controllers\Admin\CompanyController;
+use App\Http\Controllers\Admin\CompanyController  as AdminCompanyController;
 use App\Http\Controllers\Admin\TermController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin;
@@ -52,25 +54,24 @@ Route::get('users/{user}', [Admin\UserController::class, 'show'])->name('users.s
 /*管理者としてログインしていない状態でのみアクセスできるように認可を設定*/
 Route::group(['middleware' => 'guest:admin'], function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
-    /*Route::resource('restaurants', RestaurantController::class)->only(['index', 'show']);*/
-    Route::resource('restaurants', RestaurantController::class);
+    Route::resource('restaurants', RestaurantController::class)->only(['index', 'show']);
 
+    /*ログイン済*/
     Route::group(['middleware' => ['auth', 'verified']], function () {
         Route::resource('user', UserController::class)->only(['index', 'edit', 'update']);
         Route::resource('restaurants.reviews', ReviewController::class)->only(['index']);
 
+        /*有料会員*/
         Route::group(['middleware' => [Subscribed::class]], function () {
             Route::get('subscription/edit', [SubscriptionController::class, 'edit'])->name('subscription.edit');
             Route::patch('subscription', [SubscriptionController::class, 'update'])->name('subscription.update');
             Route::get('subscription/cancel', [SubscriptionController::class, 'cancel'])->name('subscription.cancel');
             Route::delete('subscription', [SubscriptionController::class, 'destroy'])->name('subscription.destroy');
             Route::resource('restaurants.reviews', ReviewController::class)->only(['create', 'store', 'edit', 'update', 'destroy']);
-            /*Route::match(['put', 'patch'], '/restaurants/{restaurant}/reviews/{review}', [ReviewController::class, 'update'])->name('restaurants.reviews.update');
-            Route::delete('/restaurants/{restaurant}/reviews/{review}', [ReviewController::class, 'destroy'])->name('restaurants.reviews.destroy');*/
-            Route::resource('restaurants.reservations', ReservationController::class)->only(['index', 'create', 'store', 'destroy']);
-            Route::resource('reservations', ReviewController::class)->only(['index']);
+            Route::resource('restaurants.reservations', ReservationController::class)->only(['create', 'store']);
+            Route::resource('reservations', ReservationController::class)->only(['index', 'destroy']);
         });
-
+        /*無料会員*/
         Route::group(['middleware' => [NotSubscribed::class]], function () {
             Route::get('subscription/create', [SubscriptionController::class, 'create'])->name('subscription.create');
             Route::post('subscription', [SubscriptionController::class, 'store'])->name('subscription.store');

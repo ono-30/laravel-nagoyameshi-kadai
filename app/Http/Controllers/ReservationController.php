@@ -13,7 +13,8 @@ class ReservationController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $reservations = Reservation::where('user_id', $user->id)->orderBy('reservation_datetime', 'desc')->paginate(15);
+        $reservations = Reservation::where('user_id', $user->id)->orderBy('reserved_datetime', 'desc')->paginate(15);
+        /*$reservations = Auth::user()->reservations()->orderBy※('reserved_datetime※カラム名を入れる', 'desc')->paginate(15);*/
 
         return view('reservations.index', compact('reservations'));
     }
